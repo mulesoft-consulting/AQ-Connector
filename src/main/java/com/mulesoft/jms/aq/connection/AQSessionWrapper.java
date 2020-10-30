@@ -1,4 +1,4 @@
-package com.mulesoft.jms.aq;
+package com.mulesoft.jms.aq.connection;
 
 import java.io.Serializable;
 //import java.sql.SQLException;

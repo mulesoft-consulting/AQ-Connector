@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="publishFlow" doc:id="04d2b29c-9fb9-468b-a179-75b2da1e7ea2" >
+		<http:listener doc:name="Listener" doc:id="845d96e8-bec6-4e58-8e38-9302ec4059ce" config-ref="HTTP_Listener_config" path="/publish"/>
+		<ee:transform doc:name="Transform Message" doc:id="c5335915-0ada-4720-8f6a-073733d36d5a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	datetime: "2020-10-30 14:54:00.000",
+	id: "Some Id",
+	payload: "HelloWorld"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<jms:publish doc:name="Publish" doc:id="051bf63b-5806-43ba-b693-8efbfffd6e36" config-ref="JMS_Config" destination="Q_AQ_EVENT"/>
+	</flow>
+	<flow name="publishFlow1" doc:id="6177d5d8-35fb-4768-bb0b-ac3223a30874" >
+		<jms:listener doc:name="Listener" doc:id="1dc45fdf-14a3-48eb-b2ee-d8ecfc329772" config-ref="JMS_Config" destination="Q_AQ_EVENT"/>
+		<logger level="INFO" doc:name="Logger" doc:id="9fa629e6-c62a-4b54-9d51-bf0346eb6a03" message="Received message #[payload]"/>
+	</flow>
+</mule>

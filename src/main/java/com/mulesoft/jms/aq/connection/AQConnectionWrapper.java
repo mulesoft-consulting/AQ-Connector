@@ -1,4 +1,4 @@
-package com.mulesoft.jms.aq;
+package com.mulesoft.jms.aq.connection;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionConsumer;

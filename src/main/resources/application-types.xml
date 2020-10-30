@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="adt" format="java">
+      <types:shape format="java" element="oracle.jms.AQjmsAdtMessage"/>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#cb111677-a481-4f7f-bb23-ed67eeb604cb">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="adt"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

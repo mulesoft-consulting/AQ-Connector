@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:spring="http://www.mulesoft.org/schema/mule/spring"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<spring:config name="Spring_Config" doc:name="Spring Config" doc:id="ab46d80c-6a51-464d-857a-f4c51feba5ad" files="aq-connection-factory.xml"/>
+			<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="bf8128b3-3a7a-424d-9a74-296d257ca78a" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+		<jms:config name="JMS_Config" doc:name="JMS Config" doc:id="170d5208-b11b-459b-9a95-79bfc384c2c9" >
+		<jms:generic-connection connectionFactory="connectionFactory"/>		
+	</jms:config>
+		<flow name="oracle-aq-consumerFlow" doc:id="f71f77e0-62ff-4ff4-8ea3-43057ae4e7b2" >
+		<http:listener doc:name="Listener" doc:id="c10fc1ba-f33a-4be3-95c3-1408cce91ded" config-ref="HTTP_Listener_config" path="/api"/>
+		<jms:consume doc:name="Consume" doc:id="c12572e5-b851-4699-aae5-555d78d1b8a0" config-ref="JMS_Config" ackMode="IMMEDIATE" maximumWait="30000" destination="Q_AQ_EVENT">
+			<jms:consumer-type >
+				<jms:queue-consumer />
+			</jms:consumer-type>
+		</jms:consume>
+		<logger level="INFO" doc:name="Logger" doc:id="83b4be04-d014-4583-8a62-79fea5f57adf" message="#[%dw 2.0
+output application/java
+---
+payload.JMSMessageID]"/>
+	</flow>
+	<flow name="oracle-final-testFlow" doc:id="7a234294-7f15-4415-8738-486083d920b4" >
+		<jms:listener doc:name="Listener" doc:id="a06ecdd4-bbe5-4389-9346-bd88a442bbca" config-ref="JMS_Config" ackMode="AUTO" destination="Q_AQ_EVENT">
+			<jms:consumer-type >
+				<jms:queue-consumer />
+			</jms:consumer-type>
+		</jms:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="874904d3-6d1b-4fa6-a730-b18d89a9fe59" message="#[payload]"/>
+	</flow>
+
+</mule>

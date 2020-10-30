@@ -55,11 +55,11 @@
 							<groupId>com.oracle.database.xml</groupId>
 							<artifactId>xdb</artifactId>
 						</sharedLibrary>
+						 -->
 						<sharedLibrary>
-							<groupId>com.oracle</groupId>
+							<groupId>com.mycompany</groupId>
 							<artifactId>xdb6</artifactId>
 						</sharedLibrary>
-						 -->
 						<sharedLibrary>
 							<groupId>com.oracle.database.jdbc</groupId>
 							<artifactId>ojdbc8</artifactId>

@@ -55,42 +55,51 @@ public class AQMessageProducerWrapper implements MessageProducer {
 
 	@Override
 	public void send(Message arg0) throws JMSException {
+		System.out.println("!!! send1");
 		producer.send(arg0);
 	}
 
 	@Override
 	public void send(Destination arg0, Message arg1) throws JMSException {
+		System.out.println("!!! send2");
 		producer.send(arg0, arg1);
 	}
 
 	@Override
 	public void send(Message arg0, CompletionListener arg1) throws JMSException {
+		System.out.println("!!! send3");
 		producer.send(arg0, arg1);
 	}
 
 	@Override
 	public void send(Destination arg0, Message arg1, CompletionListener arg2) throws JMSException {
+		System.out.println("!!! send4");
 		producer.send(arg0, arg1, arg2);
 	}
 
 	@Override
 	public void send(Message arg0, int arg1, int arg2, long arg3) throws JMSException {
+		System.out.println("!!! send5");
+		// Convert the message using the CustomEventObject ???
 		producer.send(arg0, arg1, arg2, arg3);
 	}
 
 	@Override
 	public void send(Destination arg0, Message arg1, int arg2, int arg3, long arg4) throws JMSException {
+		System.out.println("!!! send6");
 		producer.send(arg0, arg1, arg2, arg3, arg4);
 	}
 
 	@Override
 	public void send(Message arg0, int arg1, int arg2, long arg3, CompletionListener arg4) throws JMSException {
+		System.out.println("!!! send7");
 		producer.send(arg0, arg1, arg2, arg3, arg4);
 	}
 
 	@Override
 	public void send(Destination arg0, Message arg1, int arg2, int arg3, long arg4, CompletionListener arg5)
 			throws JMSException {
+		System.out.println("!!! send8");
 		producer.send(arg0, arg1, arg2, arg3, arg4, arg5);
 	}
 

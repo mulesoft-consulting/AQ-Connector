@@ -15,6 +15,9 @@
 
 		<app.runtime>4.3.0-20201013</app.runtime>
 		<mule.maven.plugin.version>3.3.5</mule.maven.plugin.version>
+		
+		<version.libs.spring>5.1.6.RELEASE</version.libs.spring>
+		<version.libs.ojdbc>19.3.0.0</version.libs.ojdbc>
 	</properties>
 
 	<build>
@@ -34,21 +37,42 @@
 							<groupId>org.springframework.security</groupId>
 							<artifactId>spring-security-config</artifactId>
 						</sharedLibrary>
+						<!-- JMS 2.0 -->
 						<sharedLibrary>
 							<groupId>javax.jms</groupId>
 							<artifactId>javax.jms-api</artifactId>
 						</sharedLibrary>
+						<!-- JMS 1.1
 						<sharedLibrary>
-							<groupId>oracle</groupId>
-							<artifactId>jmscommon</artifactId>
+							<groupId>javax.jms</groupId>
+							<artifactId>jms-api</artifactId>
+						</sharedLibrary>
+						-->
+						<sharedLibrary>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-jms</artifactId>
+						</sharedLibrary>
+				
+						<!-- Oracle JDBC driver -->
+						<sharedLibrary>
+							<groupId>com.oracle.database.jdbc</groupId>
+							<artifactId>ojdbc8</artifactId>
 						</sharedLibrary>
 						<sharedLibrary>
 							<groupId>org.springframework.data</groupId>
 							<artifactId>spring-data-oracle</artifactId>
 						</sharedLibrary>
+						
+						<!-- Oracle AQ -->
 						<sharedLibrary>
 							<groupId>com.oracle.database.messaging</groupId>
 							<artifactId>aqapi</artifactId>
+						</sharedLibrary>
+						
+						<!-- No idea why this library is required -->
+						<sharedLibrary>
+							<groupId>com.mycompany</groupId>
+							<artifactId>xdb6</artifactId>
 						</sharedLibrary>
 						<!-- 
 						<sharedLibrary>
@@ -56,19 +80,14 @@
 							<artifactId>xdb</artifactId>
 						</sharedLibrary>
 						 -->
-						<sharedLibrary>
-							<groupId>com.mycompany</groupId>
-							<artifactId>xdb6</artifactId>
-						</sharedLibrary>
-						<sharedLibrary>
-							<groupId>com.oracle.database.jdbc</groupId>
-							<artifactId>ojdbc8</artifactId>
-						</sharedLibrary>
+				
+						<!-- No idea why this library is required -->
 						<sharedLibrary>
 							<groupId>com.sun.xml.fastinfoset</groupId>
 							<artifactId>FastInfoset</artifactId>
 						</sharedLibrary>
 					</sharedLibraries>
+					
 					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
@@ -76,68 +95,12 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<version>5.1.6.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>5.1.6.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jms</artifactId>
-			<version>5.1.6.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.jms</groupId>
-			<artifactId>javax.jms-api</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>oracle</groupId>
-			<artifactId>jmscommon</artifactId>
-			<version>9i</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-oracle</artifactId>
-			<version>1.2.1.RELEASE</version>
-		</dependency>
+		<!-- Mule plugins -->
 		<dependency>
 			<groupId>org.mule.connectors</groupId>
 			<artifactId>mule-http-connector</artifactId>
 			<version>1.5.23</version>
 			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.oracle.database.messaging</groupId>
-			<artifactId>aqapi</artifactId>
-			<version>19.3.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.mycompany</groupId>
-			<artifactId>xdb6</artifactId>
-			<version>0.1</version>
-		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>com.oracle.database.xml</groupId>
-			<artifactId>xdb</artifactId>
-			<version>19.6.0.0</version>
-		</dependency>
-		 -->
-		<dependency>
-			<groupId>com.oracle.database.jdbc</groupId>
-			<artifactId>ojdbc8</artifactId>
-			<version>19.6.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.fastinfoset</groupId>
-			<artifactId>FastInfoset</artifactId>
-			<version>1.2.10</version>
 		</dependency>
 		<dependency>
             <groupId>org.mule.connectors</groupId>
@@ -157,39 +120,87 @@
             <version>1.3.4</version>
             <classifier>mule-plugin</classifier>
         </dependency>
-    </dependencies>
+        
+        <!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${version.libs.spring}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${version.libs.spring}</version>
+		</dependency>
 
-	<!-- Note this can be added to ~/.m2/settings.xml so that you don't need to add to individual pom.xml files -->
-	<repositories>
-		<repository>
-			<id>mulesoft-releases</id>
-			<name>MuleSoft Releases Repository</name>
-			<url>https://repository.mulesoft.org/nexus/content/repositories/releases/</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>mulesoft-public</id>
-			<name>MuleSoft Public Repository</name>
-			<url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>mulesoft-releases</id>
-            <name>mulesoft release repository</name>
-            <layout>default</layout>
-            <url>https://repository.mulesoft.org/releases/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+		<!-- JMS libraries -->
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>javax.jms-api</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<!-- Note that Oracle AQ actually implements JMS 1.1 -->
+		<!--
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms-api</artifactId>
+			<version>1.1-rev-1</version>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jms</artifactId>
+			<version>${version.libs.spring}</version>
+		</dependency>
+
+		<!-- Oracle JDBC driver -->
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<version>${version.libs.ojdbc}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-oracle</artifactId>
+			<version>1.2.1.RELEASE</version>
+		</dependency>
+		
+		<!-- Oracle AQ -->
+		<dependency>
+			<groupId>com.oracle.database.messaging</groupId>
+			<artifactId>aqapi</artifactId>
+			<version>${version.libs.ojdbc}</version>
+			<!-- Oracle AQ seems to incorrectly add a dependency to JMS 2.0 whereas it is actually 1.1 -->
+			<!--
+			<exclusions>
+				<exclusion>
+					<groupId>javax.jms</groupId>
+					<artifactId>javax.jms-api</artifactId>
+				</exclusion>
+			</exclusions>
+			-->
+		</dependency>
+		
+		<!-- No idea why this library is required -->
+		<dependency>
+			<groupId>com.mycompany</groupId>
+			<artifactId>xdb6</artifactId>
+			<version>0.1</version>
+		</dependency>
+		<!-- 
+		<dependency>
+			<groupId>com.oracle.database.xml</groupId>
+			<artifactId>xdb</artifactId>
+			<version>${version.libs.ojdbc}</version>
+		</dependency>
+		 -->
+
+		<!-- No idea why this library is required -->
+		<dependency>
+			<groupId>com.sun.xml.fastinfoset</groupId>
+			<artifactId>FastInfoset</artifactId>
+			<version>1.2.10</version>
+		</dependency>
+    </dependencies>
 
 </project>

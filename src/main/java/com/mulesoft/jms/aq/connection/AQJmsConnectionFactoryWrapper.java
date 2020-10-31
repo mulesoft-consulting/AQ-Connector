@@ -9,7 +9,6 @@ public class AQJmsConnectionFactoryWrapper extends AQjmsConnectionFactory {
 	private static final long serialVersionUID = 9049172625984719014L;
 
 	public AQJmsConnectionFactoryWrapper(String jdbcUrl, String username, String password) throws JMSException {
-        super();
         this.setJdbcURL(jdbcUrl);
         this.setUsername(username);
         this.setPassword(password);
@@ -22,8 +21,6 @@ public class AQJmsConnectionFactoryWrapper extends AQjmsConnectionFactory {
 
     @Override
     public Connection createConnection(String s, String s1) throws JMSException {
-        return super.createConnection(s, s1);
+        return new AQConnectionWrapper(super.createConnection(s, s1));
     }
-
-
 }

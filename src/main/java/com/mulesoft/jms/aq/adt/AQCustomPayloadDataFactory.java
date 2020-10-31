@@ -11,7 +11,8 @@ import oracle.sql.ORAData;
 import oracle.sql.ORADataFactory;
 import oracle.sql.STRUCT;
 
-public class AQCustomPayloadObject implements ORAData, ORADataFactory {
+public class AQCustomPayloadDataFactory implements ORAData, ORADataFactory {
+	private static final AQCustomPayloadDataFactory AQ_CUSTOM_PAYLOAD_DATA_FACTORY = new AQCustomPayloadDataFactory();
 
 	public static final String _SQL_NAME = "AQ_EVENT_OBJ";
 	public static final int _SQL_TYPECODE = OracleTypes.STRUCT;
@@ -20,55 +21,49 @@ public class AQCustomPayloadObject implements ORAData, ORADataFactory {
 
 	protected static int[] _sqlType = { 91, 12, 12 };
 	protected static ORADataFactory[] _factory = new ORADataFactory[3];
-	protected static final AQCustomPayloadObject _AqEventObjFactory = new AQCustomPayloadObject();
 
-	public static ORADataFactory getORADataFactory() {
-		return _AqEventObjFactory;
+	public static synchronized AQCustomPayloadDataFactory getORADataFactory() {
+		return AQ_CUSTOM_PAYLOAD_DATA_FACTORY;
 	}
 
-	/* constructors */
-	protected void _init_struct(boolean init) {
-		if (init) {
-			_struct = new MutableStruct(new Object[3], _sqlType, _factory);
-		}
+	private AQCustomPayloadDataFactory() {
+		_init_struct();
 	}
 
-	public AQCustomPayloadObject() {
-		_init_struct(true);
-	}
-
-	public AQCustomPayloadObject(Timestamp datetime, String id, String payload) throws SQLException {
-		_init_struct(true);
+	private AQCustomPayloadDataFactory(Timestamp datetime, String id, String payload) throws SQLException {
+		_init_struct();
 		setDatetime(datetime);
 		setId(id);
 		setPayload(payload);
 	}
 
+	private void _init_struct() {
+		_struct = new MutableStruct(new Object[3], _sqlType, _factory);
+	}
+
 	/* ORAData interface */
+	@Override
 	public Datum toDatum(Connection c) throws SQLException {
 		return _struct.toDatum(c, _SQL_NAME);
 	}
 
 	/* ORADataFactory interface */
+	@Override
 	public ORAData create(Datum d, int sqlType) throws SQLException {
-		return create(null, d, sqlType);
+		return create(getORADataFactory(), d, sqlType);
 	}
 
-	protected ORAData create(AQCustomPayloadObject o, Datum d, int sqlType) throws SQLException {
+	private ORAData create(AQCustomPayloadDataFactory dataFactory, Datum d, int sqlType) throws SQLException {
 		if (d == null) {
 			return null;
 		}
-		
-		if (o == null) {
-			o = new AQCustomPayloadObject();
-		}
-		
-		o._struct = new MutableStruct((STRUCT) d, _sqlType, _factory);
-		
-		return o;
+
+		dataFactory._struct = new MutableStruct((STRUCT) d, _sqlType, _factory);
+
+		return dataFactory;
 	}
 
-	/* Accessor methods */
+	/* Bean accessor methods */
 	public Timestamp getDatetime() throws SQLException {
 		return (Timestamp) _struct.getAttribute(0);
 	}

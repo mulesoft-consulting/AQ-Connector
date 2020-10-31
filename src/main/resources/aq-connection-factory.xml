@@ -1,23 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:p="http://www.springframework.org/schema/p"
-    xmlns:tool="http://www.springframework.org/schema/tool"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tool="http://www.springframework.org/schema/tool"
 	xmlns:jms="http://www.springframework.org/schema/jms"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="
-    	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	xmlns:orcl="http://www.springframework.org/schema/data/orcl"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
 		http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool.xsd
 		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+		http://www.springframework.org/schema/data/orcl http://www.springframework.org/schema/data/orcl/spring-data-orcl-1.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<bean name="connectionFactory" class="com.mulesoft.jms.aq.connection.AQJmsConnectionFactoryWrapper">
+	<util:properties id="dataSourceProps" location="classpath:dataSource.properties" />
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+	
+	<!-- Calling this method: https://docs.oracle.com/cd/B19306_01/server.102/b14291/oracle/jms/AQjmsFactory.html#getQueueConnectionFactory_java_lang_String__java_util_Properties_ -->
+	<!-- <bean id="jmsConnectionFactory" class="oracle.jms.AQjmsFactory" factory-method="getQueueConnectionFactory"> -->
+	<bean id="jmsConnectionFactory" class="com.mulesoft.jms.aq.connection.matt.MyAqJmsFactory" factory-method="getQueueConnectionFactory">
+		<constructor-arg index="0" value="${jdbc.url}" />
+		<constructor-arg index="1" ref="dataSourceProps" />
+	</bean>
+	
+	<bean id="messageDelegate" class="com.mulesoft.jms.aq.adt.MyMessageDelegate" />
+	
+	<bean id="xmlMessageConverter" class="org.springframework.data.jdbc.jms.support.converter.oracle.XmlMessageConverter">
+		<constructor-arg>
+			<bean class="org.springframework.data.jdbc.support.oracle.DocumentXmlTypeHandler" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="adtMessageConverter" class="org.springframework.data.jdbc.jms.support.converter.oracle.MappingAdtMessageConverter">
+		<constructor-arg>
+			<bean class="org.springframework.data.jdbc.jms.support.oracle.StructDatumMapper">
+				<constructor-arg index="0" value="AQCONN_USER.AQ_EVENT_OBJ" />
+				<constructor-arg index="1" value="com.mulesoft.jms.aq.domain.AqEvent" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<!--
+	<jms:listener-container connection-factory="jmsConnectionFactory" message-converter="adtMessageConverter"
+		container-class="org.springframework.data.jdbc.jms.listener.oracle.AdtMessageListenerContainer">
+		<jms:listener destination="AQCONN_USER.Q_AQ_EVENT" ref="messageDelegate" method="handleAqEventMessage" />
+	</jms:listener-container>
+	-->
+ 
+	<!--
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="sessionTransacted" value="true" />
+		<property name="connectionFactory" ref="jmsConnectionFactory "/>
+		<property name="messageConverter" ref="adtMessageConverter" />
+	</bean>
+	 -->
+
+
+
+
+	<bean name="jmsQueueConnectionFactory" class="com.mulesoft.jms.aq.connection.AQJmsConnectionFactoryWrapper">
 		<!-- JDBC URL -->
-		<constructor-arg index="0" value="jdbc:oracle:thin:@localhost:1521/ORCLPDB1" />
+		<constructor-arg index="0" value="${jdbc.url}" />
 		<!-- Username -->
-		<constructor-arg index="1" value="aqconn_user" />
+		<constructor-arg index="1" value="${jdbc.username}" />
 		<!-- Password -->
-		<constructor-arg index="2" value="password123" />
+		<constructor-arg index="2" value="${jdbc.password}" />
  	</bean>
+ 	
+	<!--
+ 	<bean id="aqEventQueue" class="com.mulesoft.jms.aq.adt.OracleAqQueueFactoryBean">
+		<property name="connectionFactory" ref="jmsQueueConnectionFactory" />
+		<property name="oracleQueueName" value="Q_AQ_EVENT" />
+	</bean>
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsQueueConnectionFactory" />
+		<property name="defaultDestination" ref="aqEventQueue" />
+	</bean>
+	-->
+ 	<!--
+ 	<bean id="jmsContainer" class="com.mulesoft.jms.aq.adt.AQCustomPayloadMessageListenerContainer">
+		<property name="connectionFactory" ref="jmsQueueConnectionFactory" />
+		<property name="destination" ref="aqEventQueue" />
+		<property name="messageListener" ref="aq.receiver" />
+		<property name="sessionTransacted" value="true" />
+		<property name="transactionManager" ref="tx.manager" />
+	</bean>
+	-->
 
 </beans>

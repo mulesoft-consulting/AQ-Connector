@@ -55,7 +55,7 @@
 				
 						<!-- Oracle JDBC driver -->
 						<sharedLibrary>
-							<groupId>com.oracle.database.jdbc</groupId>
+							<groupId>com.oracle.ojdbc</groupId>
 							<artifactId>ojdbc8</artifactId>
 						</sharedLibrary>
 						<sharedLibrary>
@@ -70,22 +70,29 @@
 						</sharedLibrary>
 						
 						<!-- No idea why this library is required -->
-						<sharedLibrary>
-							<groupId>com.mycompany</groupId>
-							<artifactId>xdb6</artifactId>
-						</sharedLibrary>
 						<!-- 
 						<sharedLibrary>
 							<groupId>com.oracle.database.xml</groupId>
 							<artifactId>xdb</artifactId>
 						</sharedLibrary>
 						 -->
+						<sharedLibrary>
+							<groupId>com.oracle.ojdbc</groupId>
+							<artifactId>xdb</artifactId>
+						</sharedLibrary>
+						
+						<sharedLibrary>
+							<groupId>com.oracle.ojdbc</groupId>
+							<artifactId>xmlparserv2</artifactId>
+						</sharedLibrary>
 				
 						<!-- No idea why this library is required -->
+						<!-- 
 						<sharedLibrary>
 							<groupId>com.sun.xml.fastinfoset</groupId>
 							<artifactId>FastInfoset</artifactId>
 						</sharedLibrary>
+						 -->
 					</sharedLibraries>
 					
 					<classifier>mule-application</classifier>
@@ -155,7 +162,7 @@
 
 		<!-- Oracle JDBC driver -->
 		<dependency>
-			<groupId>com.oracle.database.jdbc</groupId>
+			<groupId>com.oracle.ojdbc</groupId>
 			<artifactId>ojdbc8</artifactId>
 			<version>${version.libs.ojdbc}</version>
 		</dependency>
@@ -181,26 +188,33 @@
 			-->
 		</dependency>
 		
-		<!-- No idea why this library is required -->
-		<dependency>
-			<groupId>com.mycompany</groupId>
-			<artifactId>xdb6</artifactId>
-			<version>0.1</version>
-		</dependency>
 		<!-- 
 		<dependency>
 			<groupId>com.oracle.database.xml</groupId>
 			<artifactId>xdb</artifactId>
+			<version>${version.libs.xdb}</version>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>com.oracle.ojdbc</groupId>
+			<artifactId>xdb</artifactId>
 			<version>${version.libs.ojdbc}</version>
 		</dependency>
-		 -->
+		
+		<dependency>
+			<groupId>com.oracle.ojdbc</groupId>
+			<artifactId>xmlparserv2</artifactId>
+			<version>${version.libs.ojdbc}</version>
+		</dependency>
 
 		<!-- No idea why this library is required -->
+		<!-- 
 		<dependency>
 			<groupId>com.sun.xml.fastinfoset</groupId>
 			<artifactId>FastInfoset</artifactId>
 			<version>1.2.10</version>
 		</dependency>
+		 -->
     </dependencies>
 
 </project>

@@ -1,4 +1,4 @@
-package com.mulesoft.jms.aq.adt;
+package com.mulesoft.jms.aq.notused.mihael;
 
 import java.sql.Connection;
 import java.sql.SQLException;

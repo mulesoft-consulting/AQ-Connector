@@ -1,4 +1,4 @@
-package com.mulesoft.jms.aq.connection.blog;
+package com.mulesoft.jms.aq.notused.blog;
 
 import javax.jms.JMSException;
 import javax.jms.Queue;

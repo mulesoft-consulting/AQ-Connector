@@ -2,18 +2,18 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:tool="http://www.springframework.org/schema/tool"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:jms="http://www.springframework.org/schema/jms"
-	xmlns:orcl="http://www.springframework.org/schema/data/orcl"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:orcl="http://www.springframework.org/schema/data/orcl"
 	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-		http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool.xsd
-		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
-		http://www.springframework.org/schema/data/orcl http://www.springframework.org/schema/data/orcl/spring-data-orcl-1.0.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tool https://www.springframework.org/schema/tool/spring-tool.xsd
+		http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/jms https://www.springframework.org/schema/jms/spring-jms.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/data/orcl https://www.springframework.org/schema/data/orcl/spring-data-orcl-1.0.xsd">
 
 	<util:properties id="dataSourceProps" location="classpath:dataSource.properties" />
 	<context:property-placeholder location="classpath:jdbc.properties"/>
@@ -25,13 +25,16 @@
 		<property name="password" value="${jdbc.password}" />
 	</bean>
 	
-	<!-- Calling this method: https://docs.oracle.com/cd/B19306_01/server.102/b14291/oracle/jms/AQjmsFactory.html#getQueueConnectionFactory_java_lang_String__java_util_Properties_ -->
-	<!-- <bean id="jmsConnectionFactory" class="oracle.jms.AQjmsFactory" factory-method="getQueueConnectionFactory"> -->
-	<bean id="jmsConnectionFactory" class="com.mulesoft.jms.aq.connection.matt.MyAqJmsFactory" factory-method="getQueueConnectionFactory">
+	<!--
+	<orcl:aq-jms-connection-factory id="jmsConnectionFactory" data-source="dataSource" />
+	-->
+	
+	<bean id="jmsConnectionFactory" class="com.mulesoft.jms.aq.connection.MyAqJmsFactory" factory-method="getQueueConnectionFactory">
 		<constructor-arg index="0" value="${jdbc.url}" />
 		<constructor-arg index="1" ref="dataSourceProps" />
 	</bean>
 	
+	<!--
 	<bean id="messageDelegate" class="com.mulesoft.jms.aq.adt.MyMessageDelegate" />
 	
 	<bean id="xmlMessageConverter" class="org.springframework.data.jdbc.jms.support.converter.oracle.XmlMessageConverter">
@@ -48,12 +51,33 @@
 			</bean>
 		</constructor-arg>
 	</bean>
+	-->
 	
 	<!--
 	<jms:listener-container connection-factory="jmsConnectionFactory" message-converter="adtMessageConverter"
 		container-class="org.springframework.data.jdbc.jms.listener.oracle.AdtMessageListenerContainer">
 		<jms:listener destination="AQCONN_USER.Q_AQ_EVENT" ref="messageDelegate" method="handleAqEventMessage" />
 	</jms:listener-container>
+	-->
+	
+	<!--
+ 	<bean id="jmsListenerContainer" class="com.mulesoft.jms.aq.connection.MyAdtMessageListenerContainer">
+		<property name="connectionFactory" ref="jmsQueueConnectionFactory" />
+		<property name="destination" ref="aqEventQueue" />
+		<property name="messageListener" ref="aq.receiver" />
+		<property name="sessionTransacted" value="true" />
+		<property name="transactionManager" ref="tx.manager" />
+	</bean>
+	-->
+
+ 	<!--
+ 	<bean id="jmsContainer" class="com.mulesoft.jms.aq.notused.blog.AQCustomPayloadMessageListenerContainer">
+		<property name="connectionFactory" ref="jmsQueueConnectionFactory" />
+		<property name="destination" ref="aqEventQueue" />
+		<property name="messageListener" ref="aq.receiver" />
+		<property name="sessionTransacted" value="true" />
+		<property name="transactionManager" ref="tx.manager" />
+	</bean>
 	-->
  
 	<!--
@@ -62,37 +86,22 @@
 		<property name="connectionFactory" ref="jmsConnectionFactory "/>
 		<property name="messageConverter" ref="adtMessageConverter" />
 	</bean>
-	 -->
+	-->
 
 
-
-
-	<bean name="jmsQueueConnectionFactory" class="com.mulesoft.jms.aq.connection.AQJmsConnectionFactoryWrapper">
-		<!-- JDBC URL -->
+	<!--
+	<bean name="jmsQueueConnectionFactory" class="com.mulesoft.jms.aq.notused.mihael.CustomAQJmsConnectionFactory">
 		<constructor-arg index="0" value="${jdbc.url}" />
-		<!-- Username -->
 		<constructor-arg index="1" value="${jdbc.username}" />
-		<!-- Password -->
 		<constructor-arg index="2" value="${jdbc.password}" />
  	</bean>
- 	
-	<!--
- 	<bean id="aqEventQueue" class="com.mulesoft.jms.aq.adt.OracleAqQueueFactoryBean">
+ 	<bean id="aqEventQueue" class="com.mulesoft.jms.aq.notused.blog.OracleAqQueueFactoryBean">
 		<property name="connectionFactory" ref="jmsQueueConnectionFactory" />
 		<property name="oracleQueueName" value="Q_AQ_EVENT" />
 	</bean>
 	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory" ref="jmsQueueConnectionFactory" />
 		<property name="defaultDestination" ref="aqEventQueue" />
-	</bean>
-	-->
- 	<!--
- 	<bean id="jmsContainer" class="com.mulesoft.jms.aq.adt.AQCustomPayloadMessageListenerContainer">
-		<property name="connectionFactory" ref="jmsQueueConnectionFactory" />
-		<property name="destination" ref="aqEventQueue" />
-		<property name="messageListener" ref="aq.receiver" />
-		<property name="sessionTransacted" value="true" />
-		<property name="transactionManager" ref="tx.manager" />
 	</bean>
 	-->
 

@@ -1,4 +1,4 @@
-package com.mulesoft.jms.aq.connection.blog;
+package com.mulesoft.jms.aq.notused.blog;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -7,7 +7,7 @@ import javax.jms.Session;
 
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
-import com.mulesoft.jms.aq.adt.AQCustomPayloadDataFactory;
+import com.mulesoft.jms.aq.notused.mihael.AQCustomPayloadDataFactory;
 
 import oracle.jms.AQjmsSession;
 

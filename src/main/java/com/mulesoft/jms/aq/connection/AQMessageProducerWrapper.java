@@ -6,26 +6,19 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 
+import oracle.jms.AQjmsProducer;
+
 public class AQMessageProducerWrapper implements MessageProducer {
-	private MessageProducer producer;
-	
+	private AQjmsProducer producer;
+
 	public AQMessageProducerWrapper(MessageProducer producer) {
-		this.producer = producer;
+		System.out.println("!!! producer class: " + producer.getClass().getName());
+		this.producer = (AQjmsProducer) producer;
 	}
-	
+
 	@Override
 	public void close() throws JMSException {
 		producer.close();
-	}
-
-	@Override
-	public long getDeliveryDelay() throws JMSException {
-		return producer.getDeliveryDelay();
-	}
-
-	@Override
-	public int getDeliveryMode() throws JMSException {
-		return producer.getDeliveryMode();
 	}
 
 	@Override
@@ -34,8 +27,35 @@ public class AQMessageProducerWrapper implements MessageProducer {
 	}
 
 	@Override
+	public long getDeliveryDelay() throws JMSException {
+		//return producer.getDeliveryDelay();
+		throw new UnsupportedOperationException("Oracle AQ JMS implementation is 1.1, not 2.0");
+	}
+
+	@Override
+	public void setDeliveryDelay(long deliveryDelay) throws JMSException {
+		//producer.setDeliveryDelay(deliveryDelay);
+		throw new UnsupportedOperationException("Oracle AQ JMS implementation is 1.1, not 2.0");
+	}
+
+	@Override
+	public int getDeliveryMode() throws JMSException {
+		return producer.getDeliveryMode();
+	}
+
+	@Override
+	public void setDeliveryMode(int deliveryMode) throws JMSException {
+		producer.setDeliveryMode(deliveryMode);
+	}
+
+	@Override
 	public boolean getDisableMessageID() throws JMSException {
 		return producer.getDisableMessageID();
+	}
+
+	@Override
+	public void setDisableMessageID(boolean value) throws JMSException {
+		producer.setDisableMessageID(value);
 	}
 
 	@Override
@@ -44,8 +64,18 @@ public class AQMessageProducerWrapper implements MessageProducer {
 	}
 
 	@Override
+	public void setDisableMessageTimestamp(boolean value) throws JMSException {
+		producer.setDisableMessageTimestamp(value);
+	}
+
+	@Override
 	public int getPriority() throws JMSException {
 		return producer.getPriority();
+	}
+
+	@Override
+	public void setPriority(int priority) throws JMSException {
+		producer.setPriority(priority);
 	}
 
 	@Override
@@ -54,83 +84,63 @@ public class AQMessageProducerWrapper implements MessageProducer {
 	}
 
 	@Override
-	public void send(Message arg0) throws JMSException {
+	public void setTimeToLive(long timeToLive) throws JMSException {
+		producer.setTimeToLive(timeToLive);
+	}
+
+	@Override
+	public void send(Message message) throws JMSException {
 		System.out.println("!!! send1");
-		producer.send(arg0);
+		producer.send(message);
 	}
 
 	@Override
-	public void send(Destination arg0, Message arg1) throws JMSException {
+	public void send(Destination destination, Message message) throws JMSException {
 		System.out.println("!!! send2");
-		producer.send(arg0, arg1);
+		producer.send(destination, message);
 	}
 
 	@Override
-	public void send(Message arg0, CompletionListener arg1) throws JMSException {
+	public void send(Message message, CompletionListener listener) throws JMSException {
 		System.out.println("!!! send3");
-		producer.send(arg0, arg1);
+		//producer.send(message, listener);
+		throw new UnsupportedOperationException("Oracle AQ JMS implementation is 1.1, not 2.0");
 	}
 
 	@Override
-	public void send(Destination arg0, Message arg1, CompletionListener arg2) throws JMSException {
+	public void send(Destination destination, Message message, CompletionListener listener) throws JMSException {
 		System.out.println("!!! send4");
-		producer.send(arg0, arg1, arg2);
+		//producer.send(destination, message, listener);
+		throw new UnsupportedOperationException("Oracle AQ JMS implementation is 1.1, not 2.0");
 	}
 
 	@Override
-	public void send(Message arg0, int arg1, int arg2, long arg3) throws JMSException {
+	public void send(Message message, int deliveryMode, int priority, long timeToLive) throws JMSException {
 		System.out.println("!!! send5");
 		// Convert the message using the CustomEventObject ???
-		producer.send(arg0, arg1, arg2, arg3);
+		producer.send(message, deliveryMode, priority, timeToLive);
 	}
 
 	@Override
-	public void send(Destination arg0, Message arg1, int arg2, int arg3, long arg4) throws JMSException {
-		System.out.println("!!! send6");
-		producer.send(arg0, arg1, arg2, arg3, arg4);
-	}
-
-	@Override
-	public void send(Message arg0, int arg1, int arg2, long arg3, CompletionListener arg4) throws JMSException {
-		System.out.println("!!! send7");
-		producer.send(arg0, arg1, arg2, arg3, arg4);
-	}
-
-	@Override
-	public void send(Destination arg0, Message arg1, int arg2, int arg3, long arg4, CompletionListener arg5)
+	public void send(Destination destination, Message message, int deliveryMode, int priority, long timeToLive)
 			throws JMSException {
+		System.out.println("!!! send6");
+		producer.send(destination, message, deliveryMode, priority, timeToLive);
+	}
+
+	@Override
+	public void send(Message message, int deliveryMode, int priority, long timeToLive, CompletionListener listener)
+			throws JMSException {
+		System.out.println("!!! send7");
+		//producer.send(message, deliveryMode, priority, timeToLive, listener);
+		throw new UnsupportedOperationException("Oracle AQ JMS implementation is 1.1, not 2.0");
+	}
+
+	@Override
+	public void send(Destination destination, Message message, int deliveryMode, int priority, long timeToLive,
+			CompletionListener listener) throws JMSException {
 		System.out.println("!!! send8");
-		producer.send(arg0, arg1, arg2, arg3, arg4, arg5);
+		//producer.send(destination, message, deliveryMode, priority, timeToLive, listener);
+		throw new UnsupportedOperationException("Oracle AQ JMS implementation is 1.1, not 2.0");
 	}
-
-	@Override
-	public void setDeliveryDelay(long arg0) throws JMSException {
-		producer.setDeliveryDelay(arg0);
-	}
-
-	@Override
-	public void setDeliveryMode(int arg0) throws JMSException {
-		producer.setDeliveryMode(arg0);
-	}
-
-	@Override
-	public void setDisableMessageID(boolean arg0) throws JMSException {
-		producer.setDisableMessageID(arg0);
-	}
-
-	@Override
-	public void setDisableMessageTimestamp(boolean arg0) throws JMSException {
-		producer.setDisableMessageTimestamp(arg0);
-	}
-
-	@Override
-	public void setPriority(int arg0) throws JMSException {
-		producer.setPriority(arg0);
-	}
-
-	@Override
-	public void setTimeToLive(long arg0) throws JMSException {
-		producer.setTimeToLive(arg0);
-	}
-
 }

@@ -1,4 +1,4 @@
-package com.mulesoft.jms.aq.connection.matt;
+package com.mulesoft.jms.aq.connection;
 
 import java.util.Properties;
 
@@ -9,6 +9,6 @@ import oracle.jms.AQjmsFactory;
 
 public class MyAqJmsFactory {
 	public static ConnectionFactory getQueueConnectionFactory(String jdbcUrl, Properties props) throws JMSException {
-		return new MyAqJmsConnectionFactory(AQjmsFactory.getConnectionFactory(jdbcUrl, props));
+		return new AqJmsConnectionFactoryWrapper(AQjmsFactory.getConnectionFactory(jdbcUrl, props));
 	}
 }

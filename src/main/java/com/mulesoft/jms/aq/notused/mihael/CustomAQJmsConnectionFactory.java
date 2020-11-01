@@ -1,14 +1,16 @@
-package com.mulesoft.jms.aq.connection;
+package com.mulesoft.jms.aq.notused.mihael;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
 
+import com.mulesoft.jms.aq.connection.AQConnectionWrapper;
+
 import oracle.jms.AQjmsConnectionFactory;
 
-public class AQJmsConnectionFactoryWrapper extends AQjmsConnectionFactory {
+public class CustomAQJmsConnectionFactory extends AQjmsConnectionFactory {
 	private static final long serialVersionUID = 9049172625984719014L;
 
-	public AQJmsConnectionFactoryWrapper(String jdbcUrl, String username, String password) throws JMSException {
+	public CustomAQJmsConnectionFactory(String jdbcUrl, String username, String password) throws JMSException {
         this.setJdbcURL(jdbcUrl);
         this.setUsername(username);
         this.setPassword(password);

@@ -1,4 +1,4 @@
-package com.mulesoft.jms.aq.connection;
+package com.mulesoft.jms.aq.notused.mihael;
 
 import java.io.Serializable;
 //import java.sql.SQLException;
@@ -22,13 +22,21 @@ import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
 
-import com.mulesoft.jms.aq.adt.CustomEventObject;
+import com.mulesoft.jms.aq.connection.AQMessageProducerWrapper;
 
 //import oracle.jms.AQjmsDestination;
 import oracle.jms.AQjmsSession;
+//import oracle.sql.Datum;
+//import oracle.sql.ORAData;
+import oracle.sql.ORADataFactory;
 
 public class AQSessionWrapper implements Session {
 	private AQjmsSession aqJmsSession;
+
+	private static ORADataFactory createADTPayloadFactory(Destination destination) {
+		System.out.println("!!! createADTPayloadFactory(" + destination + " !!!");
+		return AQCustomPayloadDataFactory.getORADataFactory();
+	}
 
 	public AQSessionWrapper(Session session) {
 		System.out.println("!!! AQSessionWrapper(" + session.getClass().getName() + ")");
@@ -138,7 +146,8 @@ public class AQSessionWrapper implements Session {
 	@Override
 	public MessageConsumer createConsumer(Destination destination, String messageSelector) throws JMSException {
 		System.out.println("!!! createConsumer(" + destination + ", " + messageSelector + ")");
-		return aqJmsSession.createConsumer(destination, messageSelector, CustomEventObject.getOracleDataFactory(), null,
+
+		return aqJmsSession.createConsumer(destination, messageSelector, createADTPayloadFactory(destination), null,
 				false);
 	}
 

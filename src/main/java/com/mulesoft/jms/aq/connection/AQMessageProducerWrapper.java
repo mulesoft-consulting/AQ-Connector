@@ -1,19 +1,30 @@
 package com.mulesoft.jms.aq.connection;
 
+import java.nio.charset.StandardCharsets;
+import java.sql.Date;
+
 import javax.jms.CompletionListener;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 
+import com.mulesoft.jms.aq.adt.CustomEventObject;
+
 import oracle.jms.AQjmsProducer;
+import oracle.jms.AQjmsSession;
+import oracle.jms.AdtMessage;
+import oracle.sql.CHAR;
+import oracle.sql.CharacterSet;
 
 public class AQMessageProducerWrapper implements MessageProducer {
 	private AQjmsProducer producer;
+	private AQjmsSession session;
 
-	public AQMessageProducerWrapper(MessageProducer producer) {
+	public AQMessageProducerWrapper(MessageProducer producer, AQjmsSession session) {
 		System.out.println("!!! producer class: " + producer.getClass().getName());
 		this.producer = (AQjmsProducer) producer;
+		this.session = session;
 	}
 
 	@Override
@@ -117,8 +128,22 @@ public class AQMessageProducerWrapper implements MessageProducer {
 	@Override
 	public void send(Message message, int deliveryMode, int priority, long timeToLive) throws JMSException {
 		System.out.println("!!! send5");
-		// Convert the message using the CustomEventObject ???
-		producer.send(message, deliveryMode, priority, timeToLive);
+		AdtMessage adt_message = session.createAdtMessage();
+		// TODO Detect the message type and actually convert the message payload...
+		adt_message.setAdtPayload(new CustomEventObject(new Date(2020, 10, 10), "Id", "Payload"));
+		
+		adt_message.setJMSCorrelationID(message.getJMSCorrelationID());
+		adt_message.setJMSDeliveryMode(message.getJMSDeliveryMode());
+		adt_message.setJMSDestination(message.getJMSDestination());
+		adt_message.setJMSExpiration(message.getJMSExpiration());
+		adt_message.setJMSMessageID(message.getJMSMessageID());
+		adt_message.setJMSPriority(message.getJMSPriority());
+		adt_message.setJMSRedelivered(message.getJMSRedelivered());
+		// Feature not supported
+		//adt_message.setJMSReplyTo(message.getJMSReplyTo());
+		adt_message.setJMSTimestamp(message.getJMSTimestamp());
+		
+		producer.send(adt_message, deliveryMode, priority, timeToLive);
 	}
 
 	@Override

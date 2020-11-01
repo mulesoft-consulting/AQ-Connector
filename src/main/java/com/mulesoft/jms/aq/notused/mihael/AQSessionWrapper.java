@@ -134,7 +134,7 @@ public class AQSessionWrapper implements Session {
 	@Override
 	public MessageProducer createProducer(Destination destination) throws JMSException {
 		System.out.println("!!! createProducer(" + destination + ")");
-		return new AQMessageProducerWrapper(aqJmsSession.createProducer(destination));
+		return new AQMessageProducerWrapper(aqJmsSession.createProducer(destination), aqJmsSession);
 	}
 
 	@Override

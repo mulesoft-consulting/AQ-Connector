@@ -1,6 +1,7 @@
 package com.mulesoft.jms.aq.adt;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Struct;
 
@@ -43,40 +44,40 @@ public class CustomEventObject implements OracleData, OracleDataFactory {
 		return INSTANCE;
 	}
 
-	private DATE datetime;
-	private CHAR id;
-	private CHAR payload;
+	private Date datetime;
+	private String id;
+	private String payload;
 
 	public CustomEventObject() {
 	}
 
-	public CustomEventObject(DATE datetime, CHAR id, CHAR payload) {
+	public CustomEventObject(Date datetime, String id, String payload) {
 		this.datetime = datetime;
 		this.id = id;
 		this.payload = payload;
 	}
 
-	public DATE getDatetime() {
+	public Date getDatetime() {
 		return datetime;
 	}
 
-	public void setDatetime(DATE datetime) {
+	public void setDatetime(Date datetime) {
 		this.datetime = datetime;
 	}
 
-	public CHAR getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(CHAR id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public CHAR getPayload() {
+	public String getPayload() {
 		return payload;
 	}
 
-	public void setPayload(CHAR payload) {
+	public void setPayload(String payload) {
 		this.payload = payload;
 	}
 
@@ -98,6 +99,15 @@ public class CustomEventObject implements OracleData, OracleDataFactory {
 		
 		System.out.println("!!! create - jdbcValue class: " + jdbcValue.getClass().getName());
 		Object[] attributes = ((STRUCT) jdbcValue).getOracleAttributes();
-		return new CustomEventObject((DATE) attributes[0], (CHAR) attributes[1], (CHAR) attributes[2]);
+		DATE d = (DATE)attributes[0];
+		CHAR id = (CHAR)attributes[1];
+		CHAR payload = (CHAR)attributes[2];
+		
+		return new CustomEventObject(d.dateValue(), id.getString(), payload.getString());
+	}
+
+	@Override
+	public String toString() {
+		return "CustomEventObject [datetime=" + datetime + ", id=" + id + ", payload=" + payload + "]";
 	}
 }
